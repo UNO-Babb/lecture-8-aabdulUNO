@@ -1,25 +1,55 @@
 def main():
-  pitching = open("MLB_Pitching.csv", 'r')
-  team_data = []
+    # Open the files we will be using
+    inFile = open("names.dat", 'r')
+    outFile = open("StudentList.csv", 'w')
 
-  #get the import info out of pitching and store into team_data
+    # Process each line of the input file and output to the CSV file
+    for line in inFile:
+        data = line.split()
+        first = data[0]
+        last = data[1]
+        idNum = data[3]
+        year = data[5]
+        major = data[6]
 
-  pitching.close()
+        student_id = makeID(first, last, idNum)
+        major_year = makeMajorYear(major, year)
 
-  hitting = open("MLB_Hitting.csv", 'r')
+        output = f"{last},{first},{student_id},{major_year}\n"
+        outFile.write(output)
 
-  #process all the data in hitting and add to the correct portion of the team_data
+    # Close files in the end to save and ensure they are not damaged
+    inFile.close()
+    outFile.close()
 
-  hitting.close()
+def makeID(first, last, idNum):
+    idLen = len(idNum)
 
+    while len(last) < 5:
+        last += "x"
 
-  outFile = open("mlb_output.csv", 'w')
+    student_id = first[0] + last + idNum[idLen - 3:]
+    return student_id
 
-  #process each line of the team_data and save to the output file.
-  output = ""
-  outFile.write(output)
+def makeMajorYear(major, year):
+    # Abbreviate the major to the first three letters
+    major_abbr = major[:3].upper()
 
-  outFile.close()
+    # Convert the year to its abbreviation
+    if year == "Freshman":
+        year_abbr = "FR"
+    elif year == "Sophomore":
+        year_abbr = "SO"
+    elif year == "Junior":
+        year_abbr = "JR"
+    elif year == "Senior":
+        year_abbr = "SR"
+    else:
+        year_abbr = "UNK"  # Handle unexpected year values
 
-if __name__ == '__main__':
-  main()
+    # Combine major and year with a hyphen
+    return f"{major_abbr}-{year_abbr}"
+
+# Call the main function to execute the script
+if __name__ == "__main__":
+    main()
